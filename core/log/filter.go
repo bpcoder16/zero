@@ -1,4 +1,4 @@
-package logit
+package log
 
 // FilterOption is filter option.
 type FilterOption func(*Filter)

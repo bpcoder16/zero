@@ -1,4 +1,4 @@
-package logit
+package log
 
 import "strings"
 
