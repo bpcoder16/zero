@@ -2,9 +2,9 @@ package zap
 
 import (
 	"fmt"
+	"github.com/bpcoder16/zero/core/log"
 	"go.uber.org/zap"
 	"io"
-	"zero/core/log"
 )
 
 var _ log.Logger = (*Logger)(nil)

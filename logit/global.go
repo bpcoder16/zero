@@ -2,8 +2,8 @@ package logit
 
 import (
 	"context"
+	"github.com/bpcoder16/zero/core/log"
 	"sync"
-	"zero/core/log"
 )
 
 var global = &loggerAppliance{}

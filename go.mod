@@ -1,4 +1,4 @@
-module zero
+module github.com/bpcoder16/zero
 
 go 1.21
 

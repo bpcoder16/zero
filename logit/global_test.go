@@ -4,9 +4,9 @@ import (
 	"bytes"
 	"context"
 	"fmt"
+	"github.com/bpcoder16/zero/core/log"
 	"strings"
 	"testing"
-	"zero/core/log"
 )
 
 func TestGlobalLog(t *testing.T) {
