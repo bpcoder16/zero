@@ -18,7 +18,7 @@ type Option func(*Logger)
 
 func NewLogger(debugWriter, infoWriter, warnErrorFatalWriter io.Writer, msgKey string) *Logger {
 	return &Logger{
-		log: NewZapLogger(debugWriter, infoWriter, warnErrorFatalWriter),
+		log: newZapLogger(debugWriter, infoWriter, warnErrorFatalWriter),
 		msgKey: func() string {
 			if len(msgKey) > 0 {
 				return msgKey

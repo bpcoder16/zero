@@ -43,7 +43,7 @@ func getEncoder(encoderType EncoderType) zapcore.Encoder {
 	return zapcore.NewConsoleEncoder(getEncoderConfig())
 }
 
-func NewZapLogger(debugWriter, infoWriter, warnErrorFatalWriter io.Writer) *zap.Logger {
+func newZapLogger(debugWriter, infoWriter, warnErrorFatalWriter io.Writer) *zap.Logger {
 	return zap.New(
 		zapcore.NewTee(
 			zapcore.NewCore(
