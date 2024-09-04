@@ -2,6 +2,7 @@ package log
 
 import (
 	"context"
+	"path/filepath"
 	"runtime"
 	"strconv"
 	"strings"
@@ -15,6 +16,25 @@ var (
 	// DefaultTimestamp is a Valuer that returns the current wallclock time.
 	DefaultTimestamp = Timestamp(time.RFC3339)
 )
+
+var zeroSourceDir string
+
+func init() {
+	_, file, _, _ := runtime.Caller(0)
+	// compatible solution to get gorm source directory with various operating systems
+	zeroSourceDir = sourceDir(file)
+}
+
+func sourceDir(file string) string {
+	dir := filepath.Dir(file)
+	dir = filepath.Dir(dir)
+
+	s := filepath.Dir(dir)
+	if filepath.Base(s) != "zero" {
+		s = dir
+	}
+	return filepath.ToSlash(s) + "/"
+}
 
 // Valuer is returns a logit value.
 type Valuer func(ctx context.Context) interface{}
@@ -37,6 +57,25 @@ func Caller(depth int) Valuer {
 		}
 		idx = strings.LastIndexByte(file[:idx], '/')
 		return file[idx+1:] + ":" + strconv.Itoa(line)
+	}
+}
+
+func FileWithLineNumCaller() Valuer {
+	return func(_ context.Context) interface{} {
+		pcs := [13]uintptr{}
+		// the third caller usually from gorm internal
+		length := runtime.Callers(3, pcs[:])
+		frames := runtime.CallersFrames(pcs[:length])
+		for i := 0; i < length; i++ {
+			// second return value is "more", not "ok"
+			frame, _ := frames.Next()
+			if (!strings.HasPrefix(frame.File, zeroSourceDir) ||
+				strings.HasSuffix(frame.File, "_test.go")) && !strings.HasSuffix(frame.File, ".gen.go") {
+				return string(strconv.AppendInt(append([]byte(frame.File), ':'), int64(frame.Line), 10))
+			}
+		}
+
+		return ""
 	}
 }
 

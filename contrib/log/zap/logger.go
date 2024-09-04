@@ -16,15 +16,10 @@ type Logger struct {
 
 type Option func(*Logger)
 
-func NewLogger(debugWriter, infoWriter, warnErrorFatalWriter io.Writer, msgKey string) *Logger {
+func NewLogger(debugWriter, infoWriter, warnErrorFatalWriter io.Writer) *Logger {
 	return &Logger{
-		log: newZapLogger(debugWriter, infoWriter, warnErrorFatalWriter),
-		msgKey: func() string {
-			if len(msgKey) > 0 {
-				return msgKey
-			}
-			return log.DefaultMessageKey
-		}(),
+		log:    newZapLogger(debugWriter, infoWriter, warnErrorFatalWriter),
+		msgKey: log.DefaultMessageKey,
 	}
 }
 

@@ -45,7 +45,7 @@ func TestFilterLevel(t *testing.T) {
 	logger.Info("Info")
 	logger.Warn("Warn")
 	logger.Error("Error")
-	//logger.Fatal("Fatal")
+	//zaplogger.Fatal("Fatal")
 }
 
 func TestFilerCaller(t *testing.T) {
@@ -151,7 +151,7 @@ func TestFilterFuncLoggerPrefix(t *testing.T) {
 		}
 		got := buf.String()
 		if got != tt.want {
-			t.Fatalf("filter logger want %s, got %s", tt.want, got)
+			t.Fatalf("filter zaplogger want %s, got %s", tt.want, got)
 		}
 		buf.Reset()
 	}

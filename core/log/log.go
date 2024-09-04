@@ -28,7 +28,7 @@ func (z *zLogger) Log(level Level, keyValues ...interface{}) error {
 	return z.logger.Log(level, kvs...)
 }
 
-// With logger fields.
+// With zaplogger fields.
 func With(l Logger, kv ...interface{}) Logger {
 	switch v := l.(type) {
 	case *Filter:

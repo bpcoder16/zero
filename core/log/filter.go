@@ -3,9 +3,9 @@ package log
 // FilterOption is filter option.
 type FilterOption func(*Filter)
 
-const fuzzyStr = "***"
+const fuzzyStr = "******"
 
-// Filter is a logger filter.
+// Filter is a zaplogger filter.
 type Filter struct {
 	logger Logger
 	level  Level
@@ -46,7 +46,7 @@ func (f *Filter) Log(level Level, keyValues ...interface{}) error {
 	return f.logger.Log(level, keyValues...)
 }
 
-// NewFilter new a logger filter.
+// NewFilter new a zaplogger filter.
 func NewFilter(logger Logger, opts ...FilterOption) *Filter {
 	options := Filter{
 		logger: logger,

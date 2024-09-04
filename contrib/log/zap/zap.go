@@ -20,7 +20,7 @@ func getEncoderConfig() zapcore.EncoderConfig {
 		TimeKey:       "time",
 		MessageKey:    log.DefaultMessageKey,
 		LevelKey:      "level",
-		NameKey:       "logger",
+		NameKey:       "zaplogger",
 		CallerKey:     "caller",
 		StacktraceKey: "stacktrace",
 		LineEnding:    zapcore.DefaultLineEnding,

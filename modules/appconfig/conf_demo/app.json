@@ -1,0 +1,14 @@
+{
+  "env": {
+    "appName": "zero",
+    "runMode": "debug"
+  },
+  "filterKeys": [
+    "password"
+  ],
+  "filterValues": [
+    "bpcoder"
+  ],
+  "MySQLSupport": true,
+  "RedisSupport": true
+}

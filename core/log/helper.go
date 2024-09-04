@@ -6,7 +6,12 @@ import (
 	"os"
 )
 
-var DefaultMessageKey = "msg"
+const (
+	DefaultMessageKey    = "type"
+	DefaultDownstreamKey = "downstream"
+	DefaultLogIdKey      = "logId"
+	DefaultCallerKey     = "caller"
+)
 
 type HelperOption func(*Helper)
 

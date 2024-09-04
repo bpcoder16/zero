@@ -7,15 +7,15 @@ type Level int8
 const LevelKey = "level"
 
 const (
-	// LevelDebug is logger debug level.
+	// LevelDebug is zaplogger debug level.
 	LevelDebug Level = iota - 1
-	// LevelInfo is logger info level.
+	// LevelInfo is zaplogger info level.
 	LevelInfo
-	// LevelWarn is logger warn level.
+	// LevelWarn is zaplogger warn level.
 	LevelWarn
-	// LevelError is logger error level.
+	// LevelError is zaplogger error level.
 	LevelError
-	// LevelFatal is logger fatal level
+	// LevelFatal is zaplogger fatal level
 	LevelFatal
 )
 
