@@ -79,6 +79,25 @@ func FileWithLineNumCaller() Valuer {
 	}
 }
 
+func FileWithLineNumCallerRedis() Valuer {
+	return func(_ context.Context) interface{} {
+		pcs := [13]uintptr{}
+		// the third caller usually from gorm internal
+		length := runtime.Callers(3, pcs[:])
+		frames := runtime.CallersFrames(pcs[:length])
+		for i := 0; i < length; i++ {
+			// second return value is "more", not "ok"
+			frame, _ := frames.Next()
+			// TODO 很尴尬的处理方式，等我后续有想法再改吧
+			if !strings.HasPrefix(frame.File, zeroSourceDir) && !strings.Contains(frame.File, "github.com/redis/go-redis") && !strings.HasSuffix(frame.File, ".gen.go") {
+				return string(strconv.AppendInt(append([]byte(frame.File), ':'), int64(frame.Line), 10))
+			}
+		}
+
+		return ""
+	}
+}
+
 // Timestamp returns a timestamp Valuer with a custom time format.
 func Timestamp(layout string) Valuer {
 	return func(_ context.Context) interface{} {

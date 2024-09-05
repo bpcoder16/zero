@@ -2,11 +2,9 @@ package zaplogger
 
 import (
 	"context"
-	"github.com/bpcoder16/zero/contrib/file/filerotatelogs"
 	"github.com/bpcoder16/zero/contrib/log/zap"
 	"github.com/bpcoder16/zero/core/log"
-	"path"
-	"time"
+	"io"
 )
 
 // 	zaplogger.GetZapLogger(
@@ -20,23 +18,7 @@ import (
 //		}),
 //	)
 
-func GetZapLogger(rootPath, appName, logName string, isSetCaller bool, opts ...log.FilterOption) log.Logger {
-	debugWriter := filerotatelogs.NewWriter(
-		path.Join(rootPath, "log", appName, logName+".debug.log"),
-		time.Duration(86400*30)*time.Second,
-		time.Duration(3600)*time.Second,
-	)
-	infoWriter := filerotatelogs.NewWriter(
-		path.Join(rootPath, "log", appName, logName+".info.log"),
-		time.Duration(86400*30)*time.Second,
-		time.Duration(3600)*time.Second,
-	)
-	warnErrorFatalWriter := filerotatelogs.NewWriter(
-		path.Join(rootPath, "log", appName, logName+".wf.log"),
-		time.Duration(86400*30)*time.Second,
-		time.Duration(3600)*time.Second,
-	)
-
+func GetZapLogger(debugWriter, infoWriter, warnErrorFatalWriter io.Writer, caller log.Valuer, opts ...log.FilterOption) log.Logger {
 	kv := make([]interface{}, 0, 8)
 	kv = append(kv, log.DefaultLogIdKey,
 		func() log.Valuer {
@@ -69,8 +51,8 @@ func GetZapLogger(rootPath, appName, logName string, isSetCaller bool, opts ...l
 			}
 		}(),
 	)
-	if isSetCaller {
-		kv = append(kv, "caller", log.FileWithLineNumCaller())
+	if caller != nil {
+		kv = append(kv, log.DefaultCallerKey, caller)
 	}
 
 	return log.NewFilter(
