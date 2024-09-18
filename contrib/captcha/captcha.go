@@ -2,9 +2,8 @@ package captcha
 
 import (
 	"bytes"
-	"context"
 	"github.com/bpcoder16/zero/core/utils"
-	"github.com/bpcoder16/zero/logit"
+	"github.com/disintegration/imaging"
 	"github.com/fogleman/gg"
 	"github.com/golang/freetype/truetype"
 	"golang.org/x/image/font"
@@ -66,13 +65,57 @@ func loadFontFace(points float64) font.Face {
 	return face
 }
 
-func ImageBytes(ctx context.Context, width, height int, text string) (result []byte) {
-	logit.Context(ctx).DebugW("width", width, "height", height, "text", text)
+func ImageBytes(width, height int, text string) (result []byte) {
 	textLen := len(text)
 	dc := gg.NewContext(width, height)
+
 	bgR, bgG, bgB, bgA := getRandColorRange(200, 245)
 	dc.SetRGBA255(bgR, bgG, bgB, bgA)
 	dc.Clear()
+
+	// 随机生成一些图案，如矩形、圆形、线条等
+	for i := 0; i < 10; i++ {
+		// 随机选择图案类型
+		shapeType := utils.RandIntN(3)
+
+		// 随机颜色
+		dc.SetRGB(utils.RandFloat64(), utils.RandFloat64(), utils.RandFloat64())
+
+		switch shapeType {
+		case 0:
+			// 生成随机矩形
+			x := utils.RandFloat64() * float64(width)
+			y := utils.RandFloat64() * float64(height)
+			w := utils.RandFloat64() * 50
+			h := utils.RandFloat64() * 50
+			dc.DrawRectangle(x, y, w, h)
+			dc.Fill()
+		case 1:
+			// 生成随机圆形
+			x := utils.RandFloat64() * float64(width)
+			y := utils.RandFloat64() * float64(height)
+			r := utils.RandFloat64() * 30
+			dc.DrawCircle(x, y, r)
+			dc.Fill()
+		case 2:
+			// 生成随机线条
+			x1 := utils.RandFloat64() * float64(width)
+			y1 := utils.RandFloat64() * float64(height)
+			x2 := utils.RandFloat64() * float64(width)
+			y2 := utils.RandFloat64() * float64(height)
+			dc.SetLineWidth(utils.RandFloat64() * 3)
+			dc.DrawLine(x1, y1, x2, y2)
+			dc.Stroke()
+		}
+	}
+	// 将生成的随机图案背景图保存到一个图像变量中
+	randomPatternImage := dc.Image()
+
+	// 对图像进行模糊处理（可选）
+	blurredPatternImage := imaging.Blur(randomPatternImage, 2.0) // 模糊半径可以调整
+
+	// 在模糊化图案背景上绘制验证码等内容
+	dc = gg.NewContextForImage(blurredPatternImage)
 
 	// 干扰线
 	for i := 0; i < 20; i++ {
@@ -93,8 +136,7 @@ func ImageBytes(ctx context.Context, width, height int, text string) (result []b
 	for i := 0; i < len(text); i++ {
 		r, g, b, _ := getRandColor(100)
 		dc.SetRGBA255(r, g, b, 255)
-		fontPosX := float64(width/textLen*i) + fontSize*0.3
-
+		fontPosX := float64(width/textLen*i) + fontSize*0.2
 		writeText(dc, text[i:i+1], fontPosX, float64(height/2))
 	}
 
