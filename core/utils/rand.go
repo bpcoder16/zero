@@ -47,3 +47,9 @@ func RandIntN(n int) int {
 	defer randMu.Unlock()
 	return randGenerate.Intn(n)
 }
+
+func RandFloat64() float64 {
+	randMu.Lock()
+	defer randMu.Unlock()
+	return randGenerate.Float64()
+}
