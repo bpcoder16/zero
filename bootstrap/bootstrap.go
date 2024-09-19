@@ -2,6 +2,7 @@ package bootstrap
 
 import (
 	"context"
+	"github.com/bpcoder16/zero/contrib/aliyun/oss"
 	"github.com/bpcoder16/zero/core/log"
 	"github.com/bpcoder16/zero/logit"
 	"github.com/bpcoder16/zero/modules/appconfig"
@@ -20,6 +21,9 @@ func MustInit(ctx context.Context, config *appconfig.AppConfig) {
 	}
 	if config.RedisSupport {
 		initRedis(debugWriter, infoWriter, warnErrorFatalWriter)
+	}
+	if config.AliyunOSSSupport {
+		initAliyunOSS()
 	}
 }
 
@@ -75,4 +79,8 @@ func initRedis(debugWriter, infoWriter, warnErrorFatalWriter io.Writer) {
 			//}),
 		),
 	))
+}
+
+func initAliyunOSS() {
+	oss.InitAliyunOSS(env.RootPath() + "/conf/aliyun.json")
 }
