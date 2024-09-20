@@ -26,7 +26,7 @@ func InitAliyunOSS(configPath string) {
 	}
 }
 
-func SimpleUpload(fileHeader *multipart.FileHeader, targetDir string) (err error) {
+func SimpleUpload(fileHeader *multipart.FileHeader, targetDir string) (ossPath string, err error) {
 	// 打开上传的文件
 	var srcFile multipart.File
 	srcFile, err = fileHeader.Open()
@@ -39,9 +39,9 @@ func SimpleUpload(fileHeader *multipart.FileHeader, targetDir string) (err error
 
 	// 获取文件的扩展名
 	ext := filepath.Ext(fileHeader.Filename)
-	objectKey := filepath.Join(targetDir, uuid.New().String()+ext)
+	ossPath = filepath.Join(targetDir, uuid.New().String()+ext)
 
-	err = bucket.PutObject(objectKey, srcFile)
+	err = bucket.PutObject(ossPath, srcFile)
 	if err != nil {
 		return
 	}

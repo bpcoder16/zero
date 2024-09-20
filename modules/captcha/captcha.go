@@ -8,6 +8,7 @@ import (
 	"github.com/bpcoder16/zero/redis"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
+	"net/http"
 	"strings"
 	"time"
 )
@@ -21,17 +22,29 @@ func generateRandCode(ctx context.Context, n int) (uuidStr, randCodeShow string)
 	randCodeLower := strings.ToLower(randCodeShow)
 
 	uuidStr = uuid.New().String()
-	redis.DefaultClient().SetEx(ctx, fmt.Sprintf(zeroCaptchaRedisKey, uuidStr), randCodeLower, time.Second*30)
+	redis.DefaultClient().SetEx(ctx, fmt.Sprintf(zeroCaptchaRedisKey, uuidStr), randCodeLower, time.Minute)
 	return
 }
 
-func GinHandlerFunc() gin.HandlerFunc {
+func GetImageDefaultGinHandlerFunc() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		uuidStr, randCodeShow := generateRandCode(c, 5)
 		imageBytes := captcha.ImageBytes(200, 100, randCodeShow)
 		c.Writer.Header().Set("Content-Type", "image/png")
 		c.Writer.Header().Set("X-UID", uuidStr)
 		_, _ = c.Writer.Write(imageBytes)
+	}
+}
+
+func CheckDefaultGinHandlerFunc() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		xUid := c.DefaultQuery("xUid", "")
+		code := c.DefaultQuery("code", "")
+		c.JSON(http.StatusOK, gin.H{
+			"xUid":  xUid,
+			"code":  code,
+			"check": Check(c, xUid, code),
+		})
 	}
 }
 
