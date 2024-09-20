@@ -20,7 +20,7 @@ func MultiAliyunDefaultGinHandlerFunc() gin.HandlerFunc {
 		files := form.File["files"]
 
 		// 遍历所有文件
-		imageURLs := make([]string, 0, len(files))
+		ossPaths := make([]string, 0, len(files))
 		for _, file := range files {
 			var ossPath string
 			ossPath, err = oss.SimpleUpload(file, "tmp/tmp")
@@ -30,10 +30,23 @@ func MultiAliyunDefaultGinHandlerFunc() gin.HandlerFunc {
 				})
 				return
 			}
-			imageURLs = append(imageURLs, ossPath)
+			ossPaths = append(ossPaths, ossPath)
+		}
+
+		imageURLs := make([]string, 0, len(files))
+		for _, ossPath := range ossPaths {
+			imageURL, errI := oss.SignURL(ossPath, 60)
+			if errI != nil {
+				c.JSON(http.StatusOK, gin.H{
+					"err": err,
+				})
+				return
+			}
+			imageURLs = append(imageURLs, imageURL)
 		}
 
 		c.JSON(http.StatusOK, gin.H{
+			"ossPaths":  ossPaths,
 			"imageURLs": imageURLs,
 		})
 		return

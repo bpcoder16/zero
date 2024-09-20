@@ -45,6 +45,9 @@ func SimpleUpload(fileHeader *multipart.FileHeader, targetDir string) (ossPath s
 	if err != nil {
 		return
 	}
-
 	return
+}
+
+func SignURL(ossPath string, expiredInSec int64) (signedURL string, err error) {
+	return bucket.SignURL(ossPath, oss.HTTPGet, expiredInSec)
 }
